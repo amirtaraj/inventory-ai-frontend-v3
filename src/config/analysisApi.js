@@ -1,3 +1,9 @@
+// Fetch category data samples (matches curl)
+export async function fetchCategoryDataSamples() {
+  const url = `${BASE_URL}inventory/category_data_samples`;
+  const res = await axios.get(url, { headers: { accept: 'application/json' } });
+  return res.data;
+}
 // Inventory samples API (matches curl)
 export async function fetchInventorySamples({ low = 5, high = 500 } = {}) {
   const url = `${BASE_URL}inventory/samples?low_threshold=${low}&high_threshold=${high}`;

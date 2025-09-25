@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import TopAppBar from '../components/TopAppBar'
 import Container from '@mui/material/Container'
 import TextField from '@mui/material/TextField'
@@ -7,26 +7,29 @@ import Grid from '@mui/material/Grid'
 import ProductCard from '../components/ProductCard'
 import ProductDialog from '../components/ProductDialog'
 import Chatbot from '../components/Chatbot'
-import { searchText, searchImage } from '../config/api'
+import { searchTextApi, searchImageApi } from '../config/analysisApi';
 
 export default function ConsumerPage(){
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
+  const [queryText, setQueryText] = useState('')
   const [recs, setRecs] = useState([])
   const [selected, setSelected] = useState(null)
 
   async function onTextSearch(){
-    const res = await searchText(query)
-    setResults(res.results || [])
-    setRecs(res.recommendations || [])
+    setQueryText(query);
+    const res = await searchTextApi(query);
+    setResults(res.results || []);
+    setRecs(res.recommendations || []);
   }
 
   async function onImageSearch(e){
-    const file = e.target.files[0]
-    if (!file) return
-    const res = await searchImage(file)
-    setResults(res.results || [])
-    setRecs(res.recommendations || [])
+    const file = e.target.files[0];
+    if (!file) return;
+    setQueryText('');
+    const res = await searchImageApi(file);
+    setResults(res.results || []);
+    setRecs(res.recommendations || []);
   }
 
   return (
@@ -41,7 +44,13 @@ export default function ConsumerPage(){
         </div>
 
         <Grid container spacing={2} sx={{ mt: 3 }}>
-          {results.map(r => (
+          {results.filter(product => {
+            if (!queryText.trim()) return true;
+            const q = queryText.toLowerCase();
+            return product.name.toLowerCase().includes(q) ||
+              (product.masterCategory && product.masterCategory.toLowerCase().includes(q)) ||
+              (product.subCategory && product.subCategory.toLowerCase().includes(q));
+          }).map(r => (
             <Grid item xs={12} sm={6} md={4} key={r.id}>
               <ProductCard p={r} onOpen={setSelected} />
             </Grid>

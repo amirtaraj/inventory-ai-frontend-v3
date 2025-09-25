@@ -11,7 +11,7 @@ import Box from '@mui/material/Box';
 import ProductCard from '../components/ProductCard';
 import ProductDialog from '../components/ProductDialog';
 import Chatbot from '../components/Chatbot';
-import { searchTextApi, searchImageApi } from '../config/analysisApi';
+import { searchTextApi, searchImageApi, fetchCategoryDataSamples } from '../config/analysisApi';
 import { fetchInventoryAnalysis } from '../config/analysisApi';
 import { useEffect } from 'react';
 
@@ -20,6 +20,7 @@ export default function OwnerPage() {
   const [searchText, setSearchText] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [results, setResults] = useState([]);
+  const [defaultCategoryResults, setDefaultCategoryResults] = useState([]);
   const [selected, setSelected] = useState(null);
   const [forecast, setForecast] = useState(null);
   const [stats, setStats] = useState(null);
@@ -37,9 +38,18 @@ export default function OwnerPage() {
       .catch(() => {
         setStatsError('Failed to fetch stats, using mock data.');
         setStats(null);
-  setResults([]);
+        setResults([]);
       })
       .finally(() => setLoadingStats(false));
+    // Fetch default category samples for product search
+    fetchCategoryDataSamples()
+      .then(data => {
+        const allProducts = Object.values(data).flat();
+        setDefaultCategoryResults(allProducts);
+      })
+      .catch(() => {
+        setDefaultCategoryResults([]);
+      });
   }, []);
 
   // Stats (prefer API if available)
@@ -55,7 +65,7 @@ export default function OwnerPage() {
   }, [results]);
 
   // Filtering
-  const filteredProducts = results.filter(product => {
+  const filteredProducts = (searchText.trim() === '' ? defaultCategoryResults : results).filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(query.toLowerCase()) ||
       (product.masterCategory && product.masterCategory.toLowerCase().includes(query.toLowerCase())) ||
       (product.subCategory && product.subCategory.toLowerCase().includes(query.toLowerCase()));
