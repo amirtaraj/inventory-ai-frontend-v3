@@ -1,3 +1,14 @@
+// Chat API (matches curl)
+export async function chatApi(query) {
+  const url = `${BASE_URL}chat`;
+  const res = await axios.post(url, { query }, {
+    headers: {
+      accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  });
+  return res.data;
+}
 // Image search API (matches curl)
 export async function searchImageApi(file) {
   const url = `${BASE_URL}search/image`;
