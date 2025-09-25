@@ -11,8 +11,7 @@ import Box from '@mui/material/Box';
 import ProductCard from '../components/ProductCard';
 import ProductDialog from '../components/ProductDialog';
 import Chatbot from '../components/Chatbot';
-import { searchText, searchImage } from '../config/api';
-import { mockResults } from '../data/mockData';
+import { searchTextApi, searchImageApi } from '../config/analysisApi';
 import { fetchInventoryAnalysis } from '../config/analysisApi';
 import { useEffect } from 'react';
 
@@ -20,7 +19,7 @@ export default function OwnerPage() {
   const [query, setQuery] = useState('');
   const [searchText, setSearchText] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [results, setResults] = useState(mockResults);
+  const [results, setResults] = useState([]);
   const [selected, setSelected] = useState(null);
   const [forecast, setForecast] = useState(null);
   const [stats, setStats] = useState(null);
@@ -38,7 +37,7 @@ export default function OwnerPage() {
       .catch(() => {
         setStatsError('Failed to fetch stats, using mock data.');
         setStats(null);
-        setResults(mockResults);
+  setResults([]);
       })
       .finally(() => setLoadingStats(false));
   }, []);
@@ -65,8 +64,18 @@ export default function OwnerPage() {
   });
 
   // Search button handler
-  const handleSearch = () => {
+  const handleSearch = async () => {
     setQuery(searchText);
+    try {
+      const data = await searchTextApi(searchText);
+      if (data && Array.isArray(data.results)) {
+        setResults(data.results);
+      } else {
+        setResults([]);
+      }
+    } catch (err) {
+      setResults([]);
+    }
   };
 
   // Mock predictive AI forecast — replace with your endpoint later
@@ -139,7 +148,28 @@ export default function OwnerPage() {
               onKeyDown={e => { if (e.key === 'Enter') handleSearch(); }}
             />
             <Button variant="contained" onClick={handleSearch}>Search</Button>
-            <Button variant="outlined" component="label">Image Search<input hidden accept="image/*" type="file" onChange={e => alert('Image search coming soon!')} /></Button>
+            <Button variant="outlined" component="label">
+              Image Search
+              <input
+                hidden
+                accept="image/*"
+                type="file"
+                onChange={async e => {
+                  const file = e.target.files && e.target.files[0];
+                  if (!file) return;
+                  try {
+                    const data = await searchImageApi(file);
+                    if (data && Array.isArray(data.results)) {
+                      setResults(data.results);
+                    } else {
+                      setResults([]);
+                    }
+                  } catch (err) {
+                    setResults([]);
+                  }
+                }}
+              />
+            </Button>
             <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
               {categories.map(category => (
                 <Chip

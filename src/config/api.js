@@ -14,8 +14,7 @@ export async function searchText(query) {
     return res.data
   } catch (err) {
     console.warn('searchText failed', err.message)
-    const { mockResults } = await import('../data/mockData')
-    return { results: mockResults, recommendations: mockResults.slice(0,3) }
+  return { results: [], recommendations: [] }
   }
 }
 
@@ -30,8 +29,7 @@ export async function searchImage(file) {
     return res.data
   } catch (err) {
     console.warn('searchImage failed', err.message)
-    const { mockResults } = await import('../data/mockData')
-    return { results: mockResults, recommendations: mockResults.slice(0,3) }
+  return { results: [], recommendations: [] }
   }
 }
 

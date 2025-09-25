@@ -1,3 +1,27 @@
+// Image search API (matches curl)
+export async function searchImageApi(file) {
+  const url = `${BASE_URL}search/image`;
+  const fd = new FormData();
+  fd.append('file', file);
+  const res = await axios.post(url, fd, {
+    headers: {
+      accept: 'application/json',
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+  return res.data;
+}
+// Text search API (matches curl)
+export async function searchTextApi(query) {
+  const url = `${BASE_URL}search/text`;
+  const res = await axios.post(url, { query }, {
+    headers: {
+      accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  });
+  return res.data;
+}
 import axios from 'axios';
 import { BASE_URL } from './endpoints';
 
