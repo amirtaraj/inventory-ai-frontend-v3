@@ -1,3 +1,12 @@
+// Inventory samples API (matches curl)
+export async function fetchInventorySamples({ low = 5, high = 500 } = {}) {
+  const url = `${BASE_URL}inventory/samples?low_threshold=${low}&high_threshold=${high}`;
+  const res = await axios.get(url, {
+    headers: { accept: 'application/json' }
+  });
+  console.log('fetchInventorySamples API response:', res.data);
+  return res.data;
+}
 // Chat API (matches curl)
 export async function chatApi(query) {
   const url = `${BASE_URL}chat`;

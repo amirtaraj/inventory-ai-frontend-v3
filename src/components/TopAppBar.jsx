@@ -1,4 +1,6 @@
 import React from 'react'
+import { Link as RouterLink } from 'react-router-dom';
+import Link from '@mui/material/Link';
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
@@ -9,7 +11,9 @@ export default function TopAppBar(){
     <AppBar position="static" color="default" elevation={1}>
       <Toolbar>
         <Box sx={{ flexGrow: 1 }}>
-          <Typography variant="h6" color="primary">Inventory AI</Typography>
+          <Link component={RouterLink} to="/" underline="none" color="primary" sx={{ fontSize: '1.25rem', fontWeight: 600 }}>
+            TEK Inventory AI
+          </Link>
           <Typography variant="caption" display="block" color="text.secondary">AI-powered inventory & discovery</Typography>
         </Box>
       </Toolbar>
