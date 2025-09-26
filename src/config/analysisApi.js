@@ -16,7 +16,7 @@ export async function fetchInventorySamples({ low = 5, high = 500 } = {}) {
 // Chat API (matches curl)
 export async function chatApi(query) {
   const url = `${BASE_URL}chat`;
-  const res = await axios.post(url, { query }, {
+  const res = await axios.post(url, { query }, { 
     headers: {
       accept: 'application/json',
       'Content-Type': 'application/json',
