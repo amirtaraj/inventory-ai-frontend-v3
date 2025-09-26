@@ -11,7 +11,7 @@ import Box from '@mui/material/Box';
 import ProductCard from '../components/ProductCard';
 import ProductDialog from '../components/ProductDialog';
 import Chatbot from '../components/Chatbot';
-import { searchTextApi, searchImageApi, fetchCategoryDataSamples } from '../config/analysisApi';
+import { searchTextApi, searchImageApi, fetchCategoryDataSamples, fetchPrediction } from '../config/analysisApi';
 import { fetchInventoryAnalysis } from '../config/analysisApi';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -29,9 +29,27 @@ export default function OwnerPage() {
   const [statsError, setStatsError] = useState(null);
 
   const navigate = useNavigate();
+
   // Defective scan handler: route to /defective-items
   const handleDefectiveScan = () => {
     navigate('/defective-items');
+  };
+
+  // Predictive Analytics handler
+  const handleGenerateForecast = async () => {
+    // For demo, use first filtered product or fallback
+    const product = filteredProducts[0] || { id: '85123A' };
+    try {
+      const prediction = await fetchPrediction({
+        product_id: product.id,
+        weeks: 4,
+        lead_time_weeks: 1,
+        z: 1.65
+      });
+      navigate('/predictiveanalysis', { state: { prediction } });
+    } catch (err) {
+      alert('Failed to fetch prediction');
+    }
   };
 
   useEffect(() => {
@@ -228,13 +246,14 @@ export default function OwnerPage() {
             </Paper>
           </Grid>
           <Grid item xs={12} md={4}>
-            <Paper sx={{ p: 2, opacity: 0.6, pointerEvents: 'none', position: 'relative' }}>
-              <Box sx={{ position: 'absolute', top: 8, right: 8, bgcolor: 'warning.light', color: 'warning.dark', px: 1, borderRadius: 1, fontSize: 12, fontWeight: 600 }}>Coming Soon</Box>
+            <Paper sx={{ p: 2 }}>
               <Typography variant="subtitle1">Predictive Analytics</Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 AI-powered demand forecasting and trend analysis
               </Typography>
-              <Button variant="outlined" fullWidth disabled>Generate Forecast</Button>
+              <Button variant="contained" fullWidth onClick={handleGenerateForecast}>
+                Generate Forecast
+              </Button>
             </Paper>
           </Grid>
           <Grid item xs={12} md={4}>

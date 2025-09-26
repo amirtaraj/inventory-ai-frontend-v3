@@ -1,3 +1,18 @@
+import { PREDICT_API_URL } from './endpoints';
+
+// Predictive analytics forecast API
+export async function fetchPrediction({ product_id, weeks = 4, lead_time_weeks = 1, z = 1.65 }) {
+  const res = await fetch(PREDICT_API_URL, {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ product_id, weeks, lead_time_weeks, z })
+  });
+  if (!res.ok) throw new Error('Prediction API failed');
+  return res.json();
+}
 // Fetch category data samples (matches curl)
 export async function fetchCategoryDataSamples() {
   const url = `${BASE_URL}inventory/category_data_samples`;
