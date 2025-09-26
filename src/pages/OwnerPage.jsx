@@ -13,6 +13,7 @@ import ProductDialog from '../components/ProductDialog';
 import Chatbot from '../components/Chatbot';
 import { searchTextApi, searchImageApi, fetchCategoryDataSamples } from '../config/analysisApi';
 import { fetchInventoryAnalysis } from '../config/analysisApi';
+import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
 export default function OwnerPage() {
@@ -26,6 +27,12 @@ export default function OwnerPage() {
   const [stats, setStats] = useState(null);
   const [loadingStats, setLoadingStats] = useState(true);
   const [statsError, setStatsError] = useState(null);
+
+  const navigate = useNavigate();
+  // Defective scan handler: route to /defective-items
+  const handleDefectiveScan = () => {
+    navigate('/defective-items');
+  };
 
   useEffect(() => {
     setLoadingStats(true);
@@ -215,7 +222,9 @@ export default function OwnerPage() {
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 AI-powered defective item detection system
               </Typography>
-              <Button variant="outlined" fullWidth onClick={() => alert('Defect scan coming soon!')}>Run Scan</Button>
+              <Button variant="contained" fullWidth onClick={handleDefectiveScan}>
+                Run Scan
+              </Button>
             </Paper>
           </Grid>
           <Grid item xs={12} md={4}>

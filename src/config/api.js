@@ -1,6 +1,6 @@
-import axios from 'axios'
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+import axios from 'axios';
+import { BASE_URL } from './endpoints';
 
 const client = axios.create({
   baseURL: BASE_URL,
@@ -52,6 +52,19 @@ export async function getInventory(product_id) {
   } catch (err) {
     console.warn('getInventory failed', err.message)
     return null
+  }
+}
+
+// Get defective items (paginated)
+export async function getDefectiveItems(page = 1, size = 50) {
+  try {
+    const res = await client.get(`/inventory/defective`, {
+      params: { page, size }
+    })
+    return res.data
+  } catch (err) {
+    console.warn('getDefectiveItems failed', err.message)
+    return { total_defective: 0, page, page_size: size, items: [] }
   }
 }
 
